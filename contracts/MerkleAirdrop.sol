@@ -12,7 +12,7 @@ contract MerkleAirdrop {
 
     constructor(address _tokenAddress, bytes32 _merkleRoot) {
         owner = msg.sender;
-        merkleRoot = merkleRoot;
+        merkleRoot = _merkleRoot;
         tokenAddress = IERC20(_tokenAddress);
     }   
 
