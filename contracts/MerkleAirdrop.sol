@@ -22,6 +22,6 @@ contract MerkleAirdrop {
     }
 
     function claimReward() public{
-
+        
     }
 }
