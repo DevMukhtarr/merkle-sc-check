@@ -1,6 +1,6 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
-const AirdropTokenModule = buildModule("LockModule", (m) => {
+const AirdropTokenModule = buildModule("AirdropTokenModule", (m) => {
 
   const airdrop_token = m.contract("AirdropToken");
 
