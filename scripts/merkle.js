@@ -29,10 +29,11 @@ fs.createReadStream(path)
     // console.log("Root hash:", rootHash);
 
     // console.log(leafNode)
-    const claimingAddress = leafNode[0];
+    const claimingAddress = leafNode[2];
    
     const hexProof = merkleTree.getHexProof(claimingAddress);
     console.log(hexProof)
     console.log(merkleTree.verify(hexProof, claimingAddress, rootHash))
+    console.log(rootHash.toString("hex"))
     console.log("File read successful");
   });

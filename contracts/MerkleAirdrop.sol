@@ -4,6 +4,8 @@ pragma solidity ^0.8.24;
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
+event claimSuccessful(address claimer, uint256 amount);
+
 contract MerkleAirdrop {
     address public owner;
     bytes32 public  merkleRoot;
@@ -26,7 +28,7 @@ contract MerkleAirdrop {
         bytes32[] memory _merkleProof, 
         uint256 _amount
     ) public payable {
-        require(claimed[msg.sender], "Can't claim twice");
+        require(!claimed[msg.sender], "Can't claim twice");
 
         bytes32 leafNode = keccak256(abi.encodePacked(msg.sender, _amount));
         require(MerkleProof.verify(_merkleProof, merkleRoot, leafNode), "Invalid merkleproof.");
@@ -34,6 +36,7 @@ contract MerkleAirdrop {
         claimed[msg.sender] = true;
 
         IERC20(tokenAddress).transferFrom(owner, msg.sender, _amount);
+        emit claimSuccessful(msg.sender, _amount);
     }
     
     function updateMerkleRoot(bytes32 _newMerkleRoot) external onlyOwner{
