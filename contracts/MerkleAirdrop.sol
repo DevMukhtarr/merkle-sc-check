@@ -8,7 +8,8 @@ contract MerkleAirdrop {
     address public owner;
     bytes32 public  merkleRoot;
     IERC20 public tokenAddress;
-    bool claimed;
+
+    mapping (address => bool) public claimed;
 
     constructor(address _tokenAddress, bytes32 _merkleRoot) {
         owner = msg.sender;
@@ -21,7 +22,27 @@ contract MerkleAirdrop {
         _;
     }
 
-    function claimReward() public{
+    function claimReward(
+        bytes32[] memory _merkleProof, 
+        uint256 _amount
+    ) public payable {
+        require(claimed[msg.sender], "Can't claim twice");
+
+        bytes32 leafNode = keccak256(abi.encodePacked(msg.sender, _amount));
+        require(MerkleProof.verify(_merkleProof, merkleRoot, leafNode), "Invalid merkleproof.");
         
+        claimed[msg.sender] = true;
+
+        IERC20(tokenAddress).transferFrom(owner, msg.sender, _amount);
+    }
+    
+    function updateMerkleRoot(bytes32 _newMerkleRoot) external onlyOwner{
+        merkleRoot = _newMerkleRoot;
+    }
+
+    function withdrawRemainingTokens () external onlyOwner {
+        uint256 balance = tokenAddress.balanceOf(address(this));
+        require(balance > 0, "Token finished");
+        IERC20(tokenAddress).transfer(owner, balance);
     }
 }
