@@ -1,8 +1,11 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
-const tokenAddress = "0xf3351dE1dAD6Df4E3448FBEA0Fc5dc6F156984B7";
+const tokenAddress = "";
 
-const merkleRoot = "70c0025734ec479c2b49d70a4165e04d3eac7d01bb71933a6457c663fb54f852"
+const merkleRoot = ""
+// const tokenAddress = "0xf3351dE1dAD6Df4E3448FBEA0Fc5dc6F156984B7";
+
+// const merkleRoot = "0xc9bb1a7fd3875642533a3bfbbd092222a828f91e9948cb640241608c3dec48db"
 
 const MerkleAirdropModule = buildModule("MerkleAirdrop", (m) => {
 
