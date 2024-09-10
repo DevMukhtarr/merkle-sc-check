@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity ^0.8.24;
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 event claimSuccessful(address claimer, uint256 amount);
 
 contract MerkleAirdrop {
     address public owner;
     bytes32 public  merkleRoot;
-    IERC20 public tokenAddress;
+    IERC20 public immutable tokenAddress;
 
     mapping (address => bool) public claimed;
 
@@ -27,15 +27,15 @@ contract MerkleAirdrop {
     function claimReward(
         bytes32[] memory _merkleProof, 
         uint256 _amount
-    ) public payable {
+    ) external {
         require(!claimed[msg.sender], "Can't claim twice");
 
-        bytes32 leafNode = keccak256(abi.encodePacked(msg.sender, _amount));
-        require(MerkleProof.verify(_merkleProof, merkleRoot, leafNode), "Invalid merkleproof.");
+        bytes32 leaf = keccak256(abi.encodePacked(msg.sender, _amount));
+        require(MerkleProof.verify(_merkleProof, merkleRoot, leaf), "Invalid merkleproof.");
         
         claimed[msg.sender] = true;
 
-        IERC20(tokenAddress).transferFrom(owner, msg.sender, _amount);
+        require(tokenAddress.transfer(msg.sender, _amount), "Transfer failed");
         emit claimSuccessful(msg.sender, _amount);
     }
     

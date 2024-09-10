@@ -7,11 +7,20 @@ contract AirdropToken is ERC20 ("Merkle Token", "MTISC") {
     address public owner;
     constructor() payable {
         owner = msg.sender;
-        _mint(address(this), 10000e18);
+        _mint(msg.sender, 10000e18);
+    }
+
+    modifier onlyOwner () {
+        require(msg.sender == owner, "Only owner can perform this action");
+        _;
     }
 
     function mint(uint _amount) external {
         require(msg.sender == owner, "only owner can mint");
         _mint(msg.sender, _amount * 1e18);
     }
+
+    function transferFromContract(address _to, uint256 _amount) external onlyOwner {
+    _transfer(address(this), _to, _amount);
+}
 }
